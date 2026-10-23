@@ -2,31 +2,38 @@
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
+#include <ostream>
 
 const std::filesystem::path path {"/proc/stat"};
 
 int main() {
     CpuParser parser;
+    auto cpus {parser.parse_stat(path)};
 
-    auto s {parser.parse_stat(path)};
-
-    if (s.has_value()) {
-
-        auto [user, nice, system, idle, iowait, irq, softirq] = *s;
-
-        std::cout
-            << "cpu" << ""
-            << s->user << " "
-            << s->nice << " "
-            << s->system << " "
-            << s->idle << " "
-            << s->iowait << " "
-            << s->irq << " "
-            << s->softirq << "\n";
-
-        return EXIT_SUCCESS;
+    if (!cpus) {
+        std::cerr << "Failed to parse /proc/stat\n";
+        return 1;
     }
 
-    std::cerr << "Failed to parse CPU stats.\n";
-    return EXIT_FAILURE;
+    for (const auto& cpu : *cpus) {
+            std::cout << cpu.name << " "
+                      << cpu.user << " "
+                      << cpu.nice << " "
+                      << cpu.system << " "
+                      << cpu.idle << " "
+                      << cpu.iowait << " "
+                      << cpu.irq << " "
+                      << cpu.softirq << "\n";
+    }
+
+    auto cpu_count {parser.count_cpu(path)};
+
+    if (cpu_count.has_value()) {
+        std::cout << "CPU count: " << *cpu_count << std::endl;
+    } else {
+        std::cerr << "Error: CPU count can not be determined for path" << path << std::endl;
+    }
+
+
+    return EXIT_SUCCESS;
 }

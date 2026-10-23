@@ -16,7 +16,7 @@ include(CTest)
 
 add_executable(pexp
     src/main.cc
-    src/cpu.cc
+    src/parser.cc
 )
 
 target_compile_features(pexp PRIVATE cxx_std_20)
