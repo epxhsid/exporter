@@ -1,4 +1,4 @@
-#include "cpu.h"
+#include "parser.h"
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -15,7 +15,7 @@ int main() {
         auto [user, nice, system, idle, iowait, irq, softirq] = *s;
 
         std::cout
-            << "cpu" << " "
+            << "cpu" << ""
             << s->user << " "
             << s->nice << " "
             << s->system << " "
